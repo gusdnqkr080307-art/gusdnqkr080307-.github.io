@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>알고리즘 중독 벗어나기 챌린지</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: "Pretendard", Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #e8ecf3);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+      color: #2b3a67;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 14px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 30px;
+      background: #4f6df5;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #3b54c5;
+    }
+
+    .message {
+      margin-top: 25px;
+      font-size: 1rem;
+      background: #f0f3ff;
+      padding: 15px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .success {
+      margin-top: 15px;
+      color: #2e7d32;
+      font-weight: bold;
+      display: none;
+    }
+
+    canvas {
+      margin-top: 25px;
+    }
+
+    .home-btn {
+      margin-top: 25px;
+      background: #9aa4c7;
+    }
+
+    .home-btn:hover {
+      background: #7f89aa;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="home">
+  <h1>알고리즘 중독 벗어나기 챌린지</h1>
+  <p>
+    SNS를 끄는 순간,<br>
+    알고리즘의 영향에서 벗어났음을 기록해보세요.
+  </p>
+
+  <button onclick="recordChallenge()">참았다</button>
+
+  <div class="message" id="problemMessage"></div>
+  <div class="success" id="successMessage">👏 잘 참았다! 알고리즘 루프를 끊었어요.</div>
+
+  <canvas id="chart" width="400" height="250"></canvas>
+
+  <button class="home-btn" onclick="resetView()">처음으로 돌아가기</button>
+</div>
+
+<script>
+  const messages = [
+    "추천 알고리즘은 자극적인 콘텐츠를 반복적으로 노출시켜 사용 시간을 늘린다.",
+    "알고리즘은 사용자의 선택이 아니라 플랫폼의 이익을 우선할 수 있다.",
+    "계속되는 추천 콘텐츠는 스스로 멈추기 어렵게 만든다.",
+    "알고리즘은 감정을 자극해 무의식적인 소비를 유도한다.",
+    "추천 시스템은 사용자의 관심을 점점 한 방향으로 고정시킨다."
+  ];
+
+  let count = localStorage.getItem("challengeCount");
+  if (!count) count = 0;
+
+  let chart;
+
+  function recordChallenge() {
+    count++;
+    localStorage.setItem("challengeCount", count);
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    document.getElementById("problemMessage").innerText = randomMessage;
+    document.getElementById("problemMessage").style.display = "block";
+
+    document.getElementById("successMessage").style.display = "block";
+
+    drawChart();
+  }
+
+  function drawChart() {
+    const ctx = document.getElementById("chart").getContext("2d");
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["누적 참은 횟수"],
+        datasets: [{
+          data: [count],
+          backgroundColor: "#4f6df5"
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 }
+          }
+        }
+      }
+    });
+  }
+
+  function resetView() {
+    document.getElementById("problemMessage").style.display = "none";
+    document.getElementById("successMessage").style.display = "none";
+  }
+
+  drawChart();
+</script>
+
+</body>
+</html>
