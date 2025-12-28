@@ -4,113 +4,134 @@
   <meta charset="UTF-8">
   <title>알고리즘 중독 벗어나기 챌린지</title>
 
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body {
       font-family: "Pretendard", Arial, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa, #e8ecf3);
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
       margin: 0;
       padding: 0;
-      color: #333;
+      color: #2e3d2f;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 520px;
       margin: 40px auto;
       background: #ffffff;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
     h1 {
-      font-size: 1.6rem;
+      font-size: 1.7rem;
+      color: #2e7d32;
       margin-bottom: 10px;
-      color: #2b3a67;
     }
 
     p {
       font-size: 0.95rem;
-      color: #555;
+      color: #4e5f4f;
     }
 
     button {
-      margin-top: 20px;
-      padding: 14px 24px;
+      margin-top: 18px;
+      padding: 14px 26px;
       font-size: 1rem;
       border: none;
       border-radius: 30px;
-      background: #4f6df5;
+      background: #43a047;
       color: white;
       cursor: pointer;
       transition: background 0.3s;
     }
 
     button:hover {
-      background: #3b54c5;
+      background: #2e7d32;
     }
 
-    .message {
-      margin-top: 25px;
-      font-size: 1rem;
-      background: #f0f3ff;
-      padding: 15px;
-      border-radius: 12px;
+    .info-btn {
+      background: #81c784;
+      color: #1b3b1f;
+    }
+
+    .info-btn:hover {
+      background: #66bb6a;
+    }
+
+    .home-btn {
+      background: #a5d6a7;
+      color: #1b3b1f;
+    }
+
+    .home-btn:hover {
+      background: #81c784;
+    }
+
+    .box {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 14px;
+      background: #f1f8e9;
       display: none;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .success {
       margin-top: 15px;
-      color: #2e7d32;
       font-weight: bold;
+      color: #2e7d32;
       display: none;
     }
 
     canvas {
       margin-top: 25px;
-    }
-
-    .home-btn {
-      margin-top: 25px;
-      background: #9aa4c7;
-    }
-
-    .home-btn:hover {
-      background: #7f89aa;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-<div class="container" id="home">
+<div class="container">
   <h1>알고리즘 중독 벗어나기 챌린지</h1>
   <p>
-    SNS를 끄는 순간,<br>
-    알고리즘의 영향에서 벗어났음을 기록해보세요.
+    SNS를 끄는 그 순간,<br>
+    알고리즘의 도파민 루프에서 벗어났음을 기록해보세요.
   </p>
 
   <button onclick="recordChallenge()">참았다</button>
+  <br>
+  <button class="info-btn" onclick="showInfo()">왜 위험한가?</button>
 
-  <div class="message" id="problemMessage"></div>
-  <div class="success" id="successMessage">👏 잘 참았다! 알고리즘 루프를 끊었어요.</div>
+  <div class="box" id="messageBox"></div>
+  <div class="success" id="successMessage">🌱 잘 참았다! 알고리즘의 흐름을 끊었어요.</div>
 
-  <canvas id="chart" width="400" height="250"></canvas>
+  <canvas id="chart" width="420" height="260"></canvas>
 
-  <button class="home-btn" onclick="resetView()">처음으로 돌아가기</button>
+  <button class="home-btn" onclick="goHome()">홈으로 가기</button>
 </div>
 
 <script>
-  const messages = [
-    "추천 알고리즘은 자극적인 콘텐츠를 반복적으로 노출시켜 사용 시간을 늘린다.",
-    "알고리즘은 사용자의 선택이 아니라 플랫폼의 이익을 우선할 수 있다.",
-    "계속되는 추천 콘텐츠는 스스로 멈추기 어렵게 만든다.",
-    "알고리즘은 감정을 자극해 무의식적인 소비를 유도한다.",
-    "추천 시스템은 사용자의 관심을 점점 한 방향으로 고정시킨다."
+  const warningMessages = [
+    "추천 알고리즘은 도파민 분비를 유도해 사용자가 계속 머무르게 만든다.",
+    "반복적인 자극은 뇌의 보상 회로를 과도하게 활성화시켜 중독으로 이어질 수 있다.",
+    "알고리즘은 사용자의 선택처럼 보이지만 실제로는 행동을 유도한다.",
+    "도파민 중심의 콘텐츠 소비는 집중력 저하와 무기력을 유발할 수 있다.",
+    "추천 시스템은 점점 더 강한 자극을 요구하게 만든다."
   ];
+
+  const infoText = `
+  SNS 알고리즘은 사용자의 클릭, 시청 시간, 반응을 분석해
+  도파민 분비를 유도하는 콘텐츠를 우선적으로 추천합니다.
+  이 과정이 반복되면 뇌는 짧고 강한 자극에 익숙해져
+  스스로 멈추기 어려운 상태에 이르게 됩니다.
+  이는 집중력 저하, 수면 부족, 감정 기복 등의 문제로 이어질 수 있습니다.
+  `;
 
   let count = localStorage.getItem("challengeCount");
   if (!count) count = 0;
@@ -121,21 +142,28 @@
     count++;
     localStorage.setItem("challengeCount", count);
 
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    document.getElementById("problemMessage").innerText = randomMessage;
-    document.getElementById("problemMessage").style.display = "block";
+    const randomText = warningMessages[Math.floor(Math.random() * warningMessages.length)];
+    const box = document.getElementById("messageBox");
+
+    box.innerText = randomText;
+    box.style.display = "block";
 
     document.getElementById("successMessage").style.display = "block";
+    document.getElementById("chart").style.display = "block";
 
     drawChart();
+  }
+
+  function showInfo() {
+    const box = document.getElementById("messageBox");
+    box.innerText = infoText;
+    box.style.display = "block";
   }
 
   function drawChart() {
     const ctx = document.getElementById("chart").getContext("2d");
 
-    if (chart) {
-      chart.destroy();
-    }
+    if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
       type: "bar",
@@ -143,7 +171,7 @@
         labels: ["누적 참은 횟수"],
         datasets: [{
           data: [count],
-          backgroundColor: "#4f6df5"
+          backgroundColor: "#66bb6a"
         }]
       },
       options: {
@@ -160,12 +188,11 @@
     });
   }
 
-  function resetView() {
-    document.getElementById("problemMessage").style.display = "none";
+  function goHome() {
+    document.getElementById("messageBox").style.display = "none";
     document.getElementById("successMessage").style.display = "none";
+    document.getElementById("chart").style.display = "none";
   }
-
-  drawChart();
 </script>
 
 </body>
